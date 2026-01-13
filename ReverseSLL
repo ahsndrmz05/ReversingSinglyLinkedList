@@ -1,0 +1,102 @@
+// This program defines a singly linked list and provides a recursive
+// function to reverse it.
+class Node {
+    int data;
+    Node next;
+    //Constructor for the Node class.
+    // Initializes a new node with the given data and sets 'next' to null.
+     Node(int d) {
+        data = d;
+        next = null;
+    }
+}
+public class ReverseSLL {
+
+   static Node head;
+   public Node reverseRecursive(Node node) {
+       // Base Case 1: If the list is empty (node is null), just return null.
+       if (node == null) {return null;}
+       // Base Case 2: If this is the last node in the list (its 'next' is null), it means we've found the new head of the reversed list.
+       // We return this node, and it will be passed all the way back up the recursive calls.
+       if (node.next == null) {// This node is the new head of the reversed list.
+           head = node; 
+           return node;
+       }
+
+       // Recursive Step:
+       // 1. Call this function on the *rest* of the list (node.next).
+       //    This will reverse all subsequent nodes and return the new head.
+       //    For example, if list is 4->6->8, calling on 4 will call on 6.
+       //    Calling on 6 will call on 8.
+       //    Call on 8 hits the base case (node.next == null) and returns 8.
+       Node node1 = reverseRecursive(node.next);
+
+       // 2. Reverse the pointers.
+       //    At this point, 'node1' is the last node of the reversed sub-list.
+       //    'node.next' is the node that 'node' *used* to point to.
+       //    We want that node to now point *back* to 'node'.
+       //
+       //    Example: call on 6 (node=6)
+       //    - reverseRecursive(node.next) (i.e., reverse(8)) returns 8.
+       //    - node1 is 8.
+       //    - node.next (which is 8) .next = node (which is 6)
+       //    - This sets 8 -> 6
+       node.next.next = node;
+
+       // 3. Set the current node's next pointer to null.
+       //    This node is now the *last* node in the sequence
+       //    it's responsible for. (e.g., 8->6, so 6.next should be null).
+       //    This 'null' will be overwritten in the previous recursive call
+       //    (e.g., when the function for node 4 runs, it will set 6.next = 4).
+       node.next = null;
+
+       // 4. Return the head of the reversed sub-list.
+       //    This is NOT 'node', but 'node1' (which is the new head, '8' in our example)
+       return node1;
+   }
+   
+   //Helper function to print the linked list from a given starting node.
+    
+   public void printList(Node node) {
+       System.out.print("head -> ");
+       while (node != null) {
+           System.out.print(node.data + " -> ");
+           node = node.next;
+       }
+       System.out.println("null");
+   }
+
+   
+    // b. Write a test case in main to test your code
+    // The main method creates a sample linked list as per the example,
+    // prints it, reverses it, and then prints the reversed list.
+    
+   public static void main(String[] args) {
+       
+       // Create an instance of the ReverseSLL class to work with
+       ReverseSLL list = new ReverseSLL();
+
+       // Create the linked list: 4->6->8->10->12->null
+       list.head = new Node(4);
+       list.head.next = new Node(6);
+       list.head.next.next = new Node(8);
+       list.head.next.next.next = new Node(10);
+       list.head.next.next.next.next = new Node(12);
+
+       // Print the original list
+       System.out.println("Original Linked List:");
+       list.printList(head);
+
+       // Reverse the list using the recursive function
+       // Note: We pass 'head' to the function, and it will
+       // internally update the 'head' class variable when it
+       // hits the base case.
+       list.reverseRecursive(head);
+
+       // Print the reversed list
+       // The 'head' variable (which is a class member)
+       // has been updated by the recursive function.
+       System.out.println("\nReversed Linked List:");
+       list.printList(head);
+   }
+}
